@@ -1,0 +1,4 @@
+# Prevent sensitive files from being committed
+.env
+*.env
+.env.local
