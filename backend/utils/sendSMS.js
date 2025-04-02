@@ -7,15 +7,27 @@ const sendSMS = async (to, message) => {
   }
 
   try {
-    const telnyx = await getTelnyx(); // ✅ fix: get the actual Telnyx client
+    const telnyx = await getTelnyx();
 
-    const response = await telnyx.messages.create({
-      from: process.env.TELNYX_PHONE_NUMBER,
-      to,
-      text: message,
-    });
+    // 👉 Log before sending
+    console.log("👉 Sending SMS to:", to);
+    console.log("👉 Message:", message);
 
-    console.log(`SMS sent to ${to}: ${message}`);
+    const response = await telnyx.messages
+      .create({
+        from: process.env.TELNYX_PHONE_NUMBER,
+        to,
+        text: message,
+      })
+      .then((res) => {
+        console.log("Telnyx SMS sent successfully");
+        return res;
+      })
+      .catch((error) => {
+        console.error("Telnyx create() failed:", error.message || error);
+        throw error;
+      });
+
     return response;
   } catch (error) {
     console.error("Failed to send SMS:", error.message || error);
